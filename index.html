@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parvathy Menon &middot; Data Analytics Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#ffffff;--bg-secondary:#f7f6f3;--bg-tertiary:#f0efe9;--text-primary:#1a1a18;--text-secondary:#6b6a65;--text-tertiary:#9e9d98;--border:rgba(0,0,0,0.10);--border-mid:rgba(0,0,0,0.18);--green:#1D9E75;--green-light:#E1F5EE;--green-mid:#9FE1CB;--green-dark:#0F6E56;--green-deeper:#085041;--radius-md:8px;--radius-lg:12px}
+    @media(prefers-color-scheme:dark){:root{--bg:#1c1c1a;--bg-secondary:#252523;--bg-tertiary:#2e2e2b;--text-primary:#f0efe9;--text-secondary:#9e9d98;--text-tertiary:#6b6a65;--border:rgba(255,255,255,0.10);--border-mid:rgba(255,255,255,0.18);--green-light:#04342C;--green-mid:#085041;--green-dark:#5DCAA5;--green-deeper:#9FE1CB}}
+    html{font-size:16px}body{font-family:'Outfit',sans-serif;background:var(--bg-tertiary);color:var(--text-primary);line-height:1.7;min-height:100vh}
+    .wrap{max-width:900px;margin:0 auto;padding:3rem 2rem 5rem}
+    .hero{border-bottom:.5px solid var(--border);padding-bottom:2.5rem;margin-bottom:3rem}
+    .eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
+    .hero h1{font-family:'DM Serif Display',serif;font-size:52px;font-weight:400;line-height:1.1;letter-spacing:-.5px;color:var(--text-primary);margin-bottom:1.25rem}
+    .hero h1 em{font-style:italic;color:var(--green)}
+    .hero-sub{font-size:16px;color:var(--text-secondary);line-height:1.75;max-width:600px;margin-bottom:1.75rem}
+    .tag-row{display:flex;flex-wrap:wrap;gap:8px}
+    .tag{font-family:'DM Mono',monospace;font-size:11px;padding:4px 10px;border-radius:4px;border:.5px solid var(--border-mid);color:var(--text-secondary);background:var(--bg-secondary)}
+    .tag.green{background:var(--green-light);color:var(--green-dark);border-color:var(--green-mid)}
+    .section-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:3rem}
+    .proj-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.4rem 1.5rem;text-decoration:none;color:inherit;display:block;transition:box-shadow .2s,border-color .2s;position:relative}
+    .proj-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);border-color:var(--border-mid)}
+    .proj-id{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-tertiary);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem}
+    .proj-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;line-height:1.2;margin-bottom:.6rem;color:var(--text-primary)}
+    .proj-desc{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem}
+    .proj-tags{display:flex;flex-wrap:wrap;gap:6px}
+    .proj-tag{font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px;border:.5px solid var(--border);color:var(--text-tertiary);background:var(--bg-secondary)}
+    .proj-tag.green{background:var(--green-light);color:var(--green-dark);border-color:var(--green-mid)}
+    .arrow{position:absolute;bottom:1.25rem;right:1.25rem;font-size:16px;color:var(--text-tertiary)}
+    .proj-card:hover .arrow{color:var(--green)}
+    .stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:3rem}
+    .stat{background:var(--bg-secondary);border-radius:var(--radius-md);padding:1rem}
+    .stat-val{font-family:'DM Serif Display',serif;font-size:28px;line-height:1;margin-bottom:4px;color:var(--text-primary)}
+    .stat-val span{font-size:16px;color:var(--green)}
+    .stat-lbl{font-size:12px;color:var(--text-secondary)}
+    .author-row{display:flex;align-items:center;gap:14px;padding-top:2.5rem;border-top:.5px solid var(--border);flex-wrap:wrap}
+    .avatar{width:44px;height:44px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:var(--green-dark);flex-shrink:0}
+    .author-name{font-size:15px;font-weight:500}.author-title{font-size:12px;color:var(--text-secondary);margin-top:1px}
+    .github-btn{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500;padding:9px 16px;border-radius:var(--radius-md);border:.5px solid var(--border-mid);background:var(--bg);color:var(--text-primary);cursor:pointer;text-decoration:none;transition:background .15s;font-family:'Outfit',sans-serif}
+    .github-btn:hover{background:var(--bg-secondary)}
+    @media(max-width:700px){.hero h1{font-size:34px}.grid{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr 1fr}.github-btn{margin-left:0;margin-top:.5rem}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <p class="eyebrow">Data Analytics &middot; AI &middot; BI Engineering &middot; 8+ Years Amazon</p>
+    <h1>Parvathy Menon<br><em>Portfolio</em></h1>
+    <p class="hero-sub">8 end-to-end data analytics and AI projects demonstrating SQL, Python, Tableau, Power BI, statistical analysis, and AI engineering. All AI projects use free open-source tools — zero paid API cost.</p>
+    <div class="tag-row">
+      <span class="tag green">All AI 100% free &middot; no API keys</span>
+      <span class="tag">SQL</span><span class="tag">Python</span><span class="tag">Tableau</span><span class="tag">Power BI</span>
+      <span class="tag">Streamlit</span><span class="tag">Ollama</span><span class="tag">NLP</span><span class="tag">Statistics</span>
+    </div>
+  </div>
+
+  <p class="section-label">Portfolio overview</p>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-val">8</div><div class="stat-lbl">portfolio projects</div></div>
+    <div class="stat"><div class="stat-val">3</div><div class="stat-lbl">live Streamlit apps</div></div>
+    <div class="stat"><div class="stat-val">1</div><div class="stat-lbl">Tableau Public dashboard</div></div>
+    <div class="stat"><div class="stat-val">$0</div><div class="stat-lbl">AI API cost</div></div>
+  </div>
+
+  <p class="section-label">Core projects &middot; P1 &ndash; P5</p>
+  <div class="grid">
+    <a class="proj-card" href="p1-product-analytics.html">
+      <div class="proj-id">P1 &middot; SQL &middot; Python &middot; Power BI</div>
+      <div class="proj-title">Product Analytics Dashboard</div>
+      <div class="proj-desc">Cohort analysis, churn prediction, and CLV on 100K Olist e-commerce orders. 5-visual Power BI dashboard.</div>
+      <div class="proj-tags"><span class="proj-tag">pandas</span><span class="proj-tag">seaborn</span><span class="proj-tag">SQL</span><span class="proj-tag">Power BI</span></div>
+      <span class="arrow">&rarr;</span>
+    </a>
+    <a class="proj-card" href="p2-ai-ticket-analyzer.html">
+      <div class="proj-id">P2 &middot; NLP &middot; AI &middot; SQL</div>
+      <div class="proj-title">AI Support Ticket Analyzer</div>
+      <div class="proj-desc">Zero-shot NLP classification of 8K support tickets into 8 complaint categories with severity and sentiment scoring.</div>
+      <div class="proj-tags"><span class="proj-tag green">free AI</span><span class="proj-tag">HuggingFace</span><span class="proj-tag">VADER</span><span class="proj-tag">SQL</span></div>
+      <span class="arrow">&rarr;</span>
+    </a>
+    <a class="proj-card" href="p3-kpi-dashboard.html">
+      <div class="proj-id">P3 &middot; SQL &middot; Python &middot; Tableau</div>
+      <div class="proj-title">KPI Dashboard &mdash; Tableau</div>
+      <div class="proj-desc">6-visual Tableau Public dashboard on Superstore data. Revenue trend, category treemap, state map, CLV. Live URL.</div>
+      <div class="proj-tags"><span class="proj-tag green">live URL</span><span class="proj-tag">Tableau Public</span><span class="proj-tag">SQL</span><span class="proj-tag">pandas</span></div>
+      <span class="arrow">&rarr;</span>
+    </a>
+    <a class="proj-card" href="p4-ab-testing.html">
+      <div class="proj-id">P4 &middot; Python &middot; SciPy &middot; Statistics</div>
+      <div class="proj-title">A/B Test Analysis</div>
+      <div class="proj-desc">Statistical significance testing on simulated checkout experiment (10K users). Chi-square, 95% CI, revenue projection.</div>
+      <div class="proj-tags"><span class="proj-tag">SciPy</span><span class="proj-tag">chi-square</span><span class="proj-tag">confidence intervals</span><span class="proj-tag">SQL</span></div>
+      <span class="arrow">&rarr;</span>
+    </a>
+    <a class="proj-card" href="p5-ai-data-assistant.html" style="grid-column:span 2">
+      <div class="proj-id">P5 &middot; Streamlit &middot; Ollama &middot; Live App</div>
+      <div class="proj-title">AI Data Assistant &mdash; Streamlit App</div>
+      <div class="proj-desc">Live web app: upload any CSV, ask questions in plain English, get AI-generated insights with auto Plotly charts. Deployed on Streamlit Cloud. Powered by free Ollama local LLM &mdash; zero API cost.</div>
+      <div class="proj-tags"><span class="proj-tag green">live app</span><span class="proj-tag green">free AI</span><span class="proj-tag">Streamlit</span><span class="proj-tag">Ollama</span><span class="proj-tag">Plotly</span></div>
+      <span class="arrow">&rarr;</span>
+    </a>
+  </div>
+
+  <p class="section-label">AI projects &middot; PA &ndash; PC</p>
+  <div class="grid">
+    <a class="proj-card" href="pa-ai-business-analyst.html">
+      <div class="proj-id">PA &middot; BRD &middot; BDD &middot; Streamlit</div>
+      <div class="proj-title">AI Business Analyst Tool</div>
+      <div class="proj-desc">Extracts numbered BRD requirements and Given-When-Then BDD user stories from meeting transcripts. Built on 8 years Amazon BA experience.</div>
+      <div class="proj-tags"><span class="proj-tag green">free AI</span><span class="proj-tag">BRD</span><span class="proj-tag">BDD</span><span class="proj-tag">Ollama</span></div>
+      <span class="arrow">&rarr;</span>
+    </a>
+    <a class="proj-card" href="pb-customer-sentiment.html">
+      <div class="proj-id">PB &middot; NLP &middot; VADER &middot; HuggingFace</div>
+      <div class="proj-title">Customer Sentiment AI</div>
+      <div class="proj-desc">Two-layer pipeline: VADER on 10K reviews (fast, free), HuggingFace AI on 100 negative reviews (deep topics). Cost-aware architecture.</div>
+      <div class="proj-tags"><span class="proj-tag green">free AI</span><span class="proj-tag">VADER</span><span class="proj-tag">HuggingFace</span><span class="proj-tag">SQL</span></div>
+      <span class="arrow">&rarr;</span>
+    </a>
+    <a class="proj-card" href="pc-insight-generator.html" style="grid-column:span 2">
+      <div class="proj-id">PC &middot; Auto-EDA &middot; Streamlit &middot; Ollama &middot; Live App</div>
+      <div class="proj-title">AI Insight Generator</div>
+      <div class="proj-desc">Upload any dataset and the app proactively generates an executive insights report — headline finding, 5 key insights with actions, anomalies, and follow-up questions. No question needed. Powered by free Ollama Llama3. Deployed on Streamlit Cloud.</div>
+      <div class="proj-tags"><span class="proj-tag green">live app</span><span class="proj-tag green">proactive AI</span><span class="proj-tag">Auto-EDA</span><span class="proj-tag">Ollama</span><span class="proj-tag">Plotly</span></div>
+      <span class="arrow">&rarr;</span>
+    </a>
+  </div>
+
+  <div class="author-row">
+    <div class="avatar">PM</div>
+    <div><div class="author-name">Parvathy Menon</div><div class="author-title">Senior Business Analyst &middot; Data &amp; Product Operations &middot; 8+ years Amazon India</div></div>
+    <a class="github-btn" href="https://github.com/Parvathyamenon" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      github.com/Parvathyamenon
+    </a>
+  </div>
+</div>
+</body>
+</html>

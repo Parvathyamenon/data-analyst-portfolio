@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Analytics Dashboard · Parvathy Menon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg-secondary: #f7f6f3; --bg-tertiary: #f0efe9;
+      --text-primary: #1a1a18; --text-secondary: #6b6a65; --text-tertiary: #9e9d98;
+      --border: rgba(0,0,0,0.10); --border-mid: rgba(0,0,0,0.18);
+      --green: #1D9E75; --green-light: #E1F5EE; --green-mid: #9FE1CB;
+      --green-dark: #0F6E56; --green-deeper: #085041; --radius-md: 8px; --radius-lg: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1a; --bg-secondary: #252523; --bg-tertiary: #2e2e2b;
+        --text-primary: #f0efe9; --text-secondary: #9e9d98; --text-tertiary: #6b6a65;
+        --border: rgba(255,255,255,0.10); --border-mid: rgba(255,255,255,0.18);
+        --green-light: #04342C; --green-mid: #085041; --green-dark: #5DCAA5; --green-deeper: #9FE1CB;
+      }
+    }
+    html { font-size: 16px; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg-tertiary); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+    .hero { border-bottom: 0.5px solid var(--border); padding-bottom: 2.5rem; margin-bottom: 3rem; }
+    .eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 1rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: 52px; font-weight: 400; line-height: 1.1; letter-spacing: -0.5px; color: var(--text-primary); margin-bottom: 1.25rem; }
+    .hero h1 em { font-style: italic; color: var(--green); }
+    .hero-sub { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: 600px; margin-bottom: 1.75rem; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag { font-family: 'DM Mono', monospace; font-size: 11px; padding: 4px 10px; border-radius: 4px; border: 0.5px solid var(--border-mid); color: var(--text-secondary); background: var(--bg-secondary); }
+    .tag.green { background: var(--green-light); color: var(--green-dark); border-color: var(--green-mid); }
+    .section-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 1rem; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 3rem; }
+    .metric { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 1.1rem 1rem; }
+    .metric-val { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--text-primary); line-height: 1; margin-bottom: 5px; }
+    .metric-val span { font-size: 18px; color: var(--green); }
+    .metric-lbl { font-size: 12px; color: var(--text-secondary); }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 3rem; }
+    .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; }
+    .card h3 { font-size: 13px; font-weight: 500; margin-bottom: 1.25rem; color: var(--text-primary); }
+    .pipe-step { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+    .pipe-step:last-child { border-bottom: none; }
+    .pipe-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--green-dark); background: var(--green-light); border-radius: 4px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .pipe-text strong { font-size: 13px; font-weight: 500; display: block; margin-bottom: 2px; }
+    .pipe-text p { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+    .stack-list { display: flex; flex-direction: column; gap: 8px; }
+    .stack-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: var(--bg-secondary); border-radius: var(--radius-md); }
+    .stack-name { font-size: 13px; font-weight: 500; }
+    .stack-role { font-size: 11px; color: var(--text-secondary); font-family: 'DM Mono', monospace; }
+    .results-section { margin-bottom: 3rem; }
+    .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+    .bar-row { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+    .bar-label { width: 200px; flex-shrink: 0; color: var(--text-secondary); text-align: right; line-height: 1.3; }
+    .bar-track { flex: 1; height: 20px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; }
+    .bar-pct { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-secondary); width: 36px; }
+    .sql-block { margin-bottom: 3rem; }
+    .sql-tabs { display: flex; gap: 4px; margin-bottom: 1px; flex-wrap: wrap; }
+    .sql-tab { font-family: 'DM Mono', monospace; font-size: 11px; padding: 5px 14px; border-radius: 4px 4px 0 0; border: 0.5px solid var(--border); border-bottom: none; background: var(--bg-secondary); color: var(--text-secondary); cursor: pointer; transition: background 0.15s; user-select: none; }
+    .sql-tab.active { background: var(--bg); color: var(--text-primary); border-color: var(--border-mid); }
+    .sql-pane { display: none; background: var(--bg); border: 0.5px solid var(--border-mid); border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md); padding: 1.25rem 1.5rem; }
+    .sql-pane.active { display: block; }
+    .sql-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 1rem; font-style: italic; }
+    .sql-code { font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.8; color: var(--text-primary); white-space: pre; overflow-x: auto; }
+    .kw { color: var(--green); font-weight: 500; }
+    .cm { color: #BA7517; }
+    .interview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 3rem; }
+    .interview-card { border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem 1.25rem; background: var(--bg); }
+    .interviewer-role { font-size: 10px; font-weight: 500; color: var(--green); margin-bottom: 8px; font-family: 'DM Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+    .pitch-line { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+    .resume-line { background: var(--green-light); border-left: 3px solid var(--green); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 1.25rem 1.5rem; margin-bottom: 3rem; }
+    .rl-label { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green-dark); margin-bottom: 8px; }
+    .resume-line p { font-size: 14px; color: var(--green-deeper); line-height: 1.75; font-style: italic; }
+    .file-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 3rem; }
+    .file-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 0.5px solid var(--border); border-radius: var(--radius-md); background: var(--bg); }
+    .file-icon { font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 7px; border-radius: 3px; flex-shrink: 0; font-weight: 500; }
+    .file-icon.py  { background: #E1F5EE; color: #0F6E56; }
+    .file-icon.sql { background: #E6F1FB; color: #185FA5; }
+    .file-icon.png { background: #FAEEDA; color: #854F0B; }
+    .file-icon.md  { background: #F1EFE8; color: #5F5E5A; }
+    .file-name { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-primary); }
+    .file-desc { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+    .author-row { display: flex; align-items: center; gap: 14px; padding-top: 2.5rem; border-top: 0.5px solid var(--border); flex-wrap: wrap; }
+    .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: var(--green-dark); flex-shrink: 0; }
+    .author-name { font-size: 15px; font-weight: 500; }
+    .author-title { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+    .github-btn { margin-left: auto; display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; padding: 9px 16px; border-radius: var(--radius-md); border: 0.5px solid var(--border-mid); background: var(--bg); color: var(--text-primary); cursor: pointer; text-decoration: none; transition: background 0.15s; font-family: 'Outfit', sans-serif; }
+    .github-btn:hover { background: var(--bg-secondary); }
+    @media (max-width: 700px) {
+      .hero h1 { font-size: 34px; } .two-col { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; } .interview-grid { grid-template-columns: 1fr; }
+      .file-list { grid-template-columns: 1fr; } .bar-label { width: 130px; font-size: 11px; }
+      .github-btn { margin-left: 0; margin-top: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <p class="eyebrow">Portfolio Project · P1 · SQL · Python · Power BI</p>
+    <h1>Product <em>Analytics</em><br>Dashboard</h1>
+    <p class="hero-sub">A cohort analysis and churn prediction pipeline on 100,000 real Brazilian e-commerce orders. Calculates month-over-month retention, customer lifetime value, and churn rate using SQL, pandas, and Power BI — the exact metrics every product company asks for in BIE interviews.</p>
+    <div class="tag-row">
+      <span class="tag green">Kaggle: Olist · 100K orders</span>
+      <span class="tag">Python</span>
+      <span class="tag">pandas</span>
+      <span class="tag">seaborn</span>
+      <span class="tag">SQL (SQLite)</span>
+      <span class="tag">Power BI</span>
+      <span class="tag">matplotlib</span>
+    </div>
+  </div>
+
+  <p class="section-label">Key results</p>
+  <div class="metrics-grid">
+    <div class="metric"><div class="metric-val">100<span>K</span></div><div class="metric-lbl">orders analysed</div></div>
+    <div class="metric"><div class="metric-val">96<span>K</span></div><div class="metric-lbl">unique customers</div></div>
+    <div class="metric"><div class="metric-val">~3<span>%</span></div><div class="metric-lbl">avg month-1 retention</div></div>
+    <div class="metric"><div class="metric-val">R$<span>160</span></div><div class="metric-lbl">median customer CLV</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>Pipeline architecture</h3>
+      <div class="pipe-step"><div class="pipe-num">01</div><div class="pipe-text"><strong>Data ingestion</strong><p>Load 4 Olist CSVs (orders, customers, payments, items) from Kaggle via pandas</p></div></div>
+      <div class="pipe-step"><div class="pipe-num">02</div><div class="pipe-text"><strong>Data cleaning</strong><p>Parse timestamps, filter to "delivered" status, merge payment values onto orders</p></div></div>
+      <div class="pipe-step"><div class="pipe-num">03</div><div class="pipe-text"><strong>Cohort assignment</strong><p>Find each customer's first purchase month (cohort_month) and calculate months_since_cohort</p></div></div>
+      <div class="pipe-step"><div class="pipe-num">04</div><div class="pipe-text"><strong>Retention matrix</strong><p>Pivot cohort × month_number, divide by cohort size to get retention rate %</p></div></div>
+      <div class="pipe-step"><div class="pipe-num">05</div><div class="pipe-text"><strong>CLV calculation</strong><p>Group by customer_id, sum payment_value — median and distribution analysis</p></div></div>
+      <div class="pipe-step"><div class="pipe-num">06</div><div class="pipe-text"><strong>Dashboard output</strong><p>4-chart matplotlib figure: retention heatmap, revenue trend, active customers, CLV distribution</p></div></div>
+    </div>
+    <div class="card">
+      <h3>Tech stack</h3>
+      <div class="stack-list">
+        <div class="stack-item"><span class="stack-name">pandas</span><span class="stack-role">data loading · cohort logic</span></div>
+        <div class="stack-item"><span class="stack-name">seaborn / matplotlib</span><span class="stack-role">retention heatmap · charts</span></div>
+        <div class="stack-item"><span class="stack-name">SQL (SQLiteOnline)</span><span class="stack-role">cohort_retention.sql · churn_rate.sql</span></div>
+        <div class="stack-item"><span class="stack-name">Power BI Desktop</span><span class="stack-role">5-visual interactive dashboard</span></div>
+        <div class="stack-item"><span class="stack-name">Olist E-Commerce</span><span class="stack-role">Kaggle · 100K real orders</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-section">
+    <p class="section-label">Retention by cohort month (sample results)</p>
+    <div class="card" style="padding: 1.5rem 1.75rem;">
+      <div class="bar-chart" id="barChart"></div>
+    </div>
+  </div>
+
+  <div class="sql-block">
+    <p class="section-label">SQL analysis queries</p>
+    <div class="sql-tabs">
+      <div class="sql-tab active" onclick="showTab(0)">Q1 — Cohort retention</div>
+      <div class="sql-tab" onclick="showTab(1)">Q2 — Churn rate</div>
+      <div class="sql-tab" onclick="showTab(2)">Q3 — CLV by cohort</div>
+    </div>
+    <div class="sql-pane active" id="pane0">
+      <p class="sql-desc">What % of customers from each monthly cohort return to buy again?</p>
+      <div class="sql-code"><span class="kw">WITH</span> cohort_base <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> customer_id,
+    strftime(<span class="cm">'%Y-%m'</span>, <span class="kw">MIN</span>(order_purchase_timestamp)) <span class="kw">AS</span> cohort_month
+  <span class="kw">FROM</span> olist_orders_dataset
+  <span class="kw">WHERE</span> order_status = <span class="cm">'delivered'</span>
+  <span class="kw">GROUP BY</span> customer_id
+),
+retention_counts <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> c.cohort_month, month_number,
+    <span class="kw">COUNT</span>(<span class="kw">DISTINCT</span> o.customer_id) <span class="kw">AS</span> active_customers
+  <span class="kw">FROM</span> olist_orders_dataset o
+  <span class="kw">JOIN</span> cohort_base c <span class="kw">ON</span> o.customer_id = c.customer_id
+  <span class="kw">GROUP BY</span> c.cohort_month, month_number
+)
+<span class="kw">SELECT</span> r.cohort_month, r.month_number,
+  <span class="kw">ROUND</span>(100.0 * r.active_customers / s.cohort_customers, 1) <span class="kw">AS</span> retention_rate_pct
+<span class="kw">FROM</span> retention_counts r
+<span class="kw">JOIN</span> cohort_size s <span class="kw">ON</span> r.cohort_month = s.cohort_month
+<span class="kw">ORDER BY</span> r.cohort_month, r.month_number;</div>
+    </div>
+    <div class="sql-pane" id="pane1">
+      <p class="sql-desc">What % of last month's active customers did NOT buy this month?</p>
+      <div class="sql-code"><span class="kw">WITH</span> monthly_customers <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> customer_id,
+    strftime(<span class="cm">'%Y-%m'</span>, order_purchase_timestamp) <span class="kw">AS</span> order_month
+  <span class="kw">FROM</span> olist_orders_dataset
+  <span class="kw">WHERE</span> order_status = <span class="cm">'delivered'</span>
+  <span class="kw">GROUP BY</span> customer_id, strftime(<span class="cm">'%Y-%m'</span>, order_purchase_timestamp)
+)
+<span class="kw">SELECT</span>
+  curr.order_month,
+  <span class="kw">COUNT</span>(<span class="kw">DISTINCT</span> curr.customer_id) <span class="kw">AS</span> current_customers,
+  <span class="kw">COUNT</span>(<span class="kw">DISTINCT</span> prev.customer_id) <span class="kw">AS</span> returning_customers,
+  <span class="kw">ROUND</span>(100.0 * (<span class="kw">COUNT</span>(<span class="kw">DISTINCT</span> curr.customer_id)
+    - <span class="kw">COUNT</span>(<span class="kw">DISTINCT</span> prev.customer_id))
+    / <span class="kw">NULLIF</span>(<span class="kw">COUNT</span>(<span class="kw">DISTINCT</span> curr.customer_id), 0), 1) <span class="kw">AS</span> churn_rate_pct
+<span class="kw">FROM</span> monthly_customers curr
+<span class="kw">LEFT JOIN</span> monthly_customers prev
+  <span class="kw">ON</span> curr.customer_id = prev.customer_id
+  <span class="kw">AND</span> prev.order_month = strftime(<span class="cm">'%Y-%m'</span>, date(curr.order_month||<span class="cm">'-01'</span>,<span class="cm">'-1 month'</span>))
+<span class="kw">GROUP BY</span> curr.order_month
+<span class="kw">ORDER BY</span> curr.order_month;</div>
+    </div>
+    <div class="sql-pane" id="pane2">
+      <p class="sql-desc">Which customer cohort has the highest average lifetime value?</p>
+      <div class="sql-code"><span class="kw">SELECT</span>
+  c.cohort_month,
+  <span class="kw">COUNT</span>(<span class="kw">DISTINCT</span> c.customer_id) <span class="kw">AS</span> cohort_size,
+  <span class="kw">ROUND</span>(<span class="kw">AVG</span>(p.total_spend), 2) <span class="kw">AS</span> avg_clv,
+  <span class="kw">ROUND</span>(<span class="kw">SUM</span>(p.total_spend), 2) <span class="kw">AS</span> cohort_total_revenue
+<span class="kw">FROM</span> cohort_base c
+<span class="kw">JOIN</span> (
+  <span class="kw">SELECT</span> customer_id, <span class="kw">SUM</span>(payment_value) <span class="kw">AS</span> total_spend
+  <span class="kw">FROM</span> olist_order_payments_dataset
+  <span class="kw">GROUP BY</span> customer_id
+) p <span class="kw">ON</span> c.customer_id = p.customer_id
+<span class="kw">GROUP BY</span> c.cohort_month
+<span class="kw">ORDER BY</span> avg_clv <span class="kw">DESC</span>;</div>
+    </div>
+  </div>
+
+  <p class="section-label">Interview pitch by role</p>
+  <div class="interview-grid">
+    <div class="interview-card">
+      <div class="interviewer-role">Data Analyst</div>
+      <p class="pitch-line">"Built cohort retention and CLV analysis on 100K orders. Identified that month-1 retention averages ~3%, with top cohorts retaining 6%+. Created a 5-visual Power BI dashboard used to simulate a product analytics quarterly review."</p>
+    </div>
+    <div class="interview-card">
+      <div class="interviewer-role">Business Analyst</div>
+      <p class="pitch-line">"Mapped customer journeys from first purchase through churn. Identified that 97% of customers do not return after month 0 — surfacing the business need for a loyalty programme."</p>
+    </div>
+    <div class="interview-card">
+      <div class="interviewer-role">BIE / Senior Analyst</div>
+      <p class="pitch-line">"Same cohort logic I applied at Amazon for compliance KPI tracking. Here I applied it to customer retention — the analytical pattern is identical. Median CLV R$160, top decile 4× the median."</p>
+    </div>
+  </div>
+
+  <div class="resume-line">
+    <div class="rl-label">Resume line</div>
+    <p>"Built end-to-end cohort retention and CLV analytics pipeline on 100,000 e-commerce orders using Python and SQL; identified month-1 retention of ~3% and median CLV of R$160; delivered a 5-visual Power BI dashboard replicating a product analytics quarterly review."</p>
+  </div>
+
+  <p class="section-label">Repository files</p>
+  <div class="file-list">
+    <div class="file-item"><div class="file-icon py">.py</div><div><div class="file-name">retention_analysis.py</div><div class="file-desc">Cohort matrix · CLV · 4 charts · pandas + seaborn</div></div></div>
+    <div class="file-item"><div class="file-icon sql">.sql</div><div><div class="file-name">cohort_retention.sql</div><div class="file-desc">Cohort base → month_number → retention rate</div></div></div>
+    <div class="file-item"><div class="file-icon sql">.sql</div><div><div class="file-name">churn_rate.sql</div><div class="file-desc">Monthly active customers → churn rate %</div></div></div>
+    <div class="file-item"><div class="file-icon png">.png</div><div><div class="file-name">product_analytics_dashboard.png</div><div class="file-desc">4-chart output · add to output/ folder</div></div></div>
+    <div class="file-item"><div class="file-icon md">.md</div><div><div class="file-name">README.md</div><div class="file-desc">Project write-up · dashboard image at top</div></div></div>
+  </div>
+
+  <div class="author-row">
+    <div class="avatar">PM</div>
+    <div><div class="author-name">Parvathy Menon</div><div class="author-title">Senior Business Analyst · Data & Product Operations</div></div>
+    <a class="github-btn" href="https://github.com/Parvathyamenon" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      github.com/Parvathyamenon
+    </a>
+  </div>
+
+</div>
+<script>
+  const bars = [
+    { label: "Month-0 retention",   pct: 100,  color: "#1D9E75" },
+    { label: "Month-1 retention",   pct: 3.2,  color: "#2D6A4F" },
+    { label: "Month-2 retention",   pct: 1.8,  color: "#40916C" },
+    { label: "Month-3 retention",   pct: 1.2,  color: "#52B788" },
+    { label: "Top CLV decile share",pct: 42,   color: "#1D9E75" },
+    { label: "Delivered orders %",  pct: 97,   color: "#74C69D" },
+  ];
+  const chart = document.getElementById('barChart');
+  bars.forEach(b => {
+    const row = document.createElement('div'); row.className = 'bar-row';
+    row.innerHTML = `<div class="bar-label">${b.label}</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:${b.color};transition:width 0.9s ease;"></div></div><div class="bar-pct">${b.pct}%</div>`;
+    chart.appendChild(row);
+  });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll('.bar-fill').forEach((el, i) => { el.style.width = bars[i].pct + '%'; });
+  }));
+  function showTab(i) {
+    document.querySelectorAll('.sql-tab').forEach((t,j) => t.classList.toggle('active', i===j));
+    document.querySelectorAll('.sql-pane').forEach((p,j) => p.classList.toggle('active', i===j));
+  }
+</script>
+</body>
+</html>

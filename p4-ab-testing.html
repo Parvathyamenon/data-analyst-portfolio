@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A/B Test Analysis · Parvathy Menon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#ffffff;--bg-secondary:#f7f6f3;--bg-tertiary:#f0efe9;--text-primary:#1a1a18;--text-secondary:#6b6a65;--text-tertiary:#9e9d98;--border:rgba(0,0,0,0.10);--border-mid:rgba(0,0,0,0.18);--green:#1D9E75;--green-light:#E1F5EE;--green-mid:#9FE1CB;--green-dark:#0F6E56;--green-deeper:#085041;--radius-md:8px;--radius-lg:12px}
+    @media(prefers-color-scheme:dark){:root{--bg:#1c1c1a;--bg-secondary:#252523;--bg-tertiary:#2e2e2b;--text-primary:#f0efe9;--text-secondary:#9e9d98;--text-tertiary:#6b6a65;--border:rgba(255,255,255,0.10);--border-mid:rgba(255,255,255,0.18);--green-light:#04342C;--green-mid:#085041;--green-dark:#5DCAA5;--green-deeper:#9FE1CB}}
+    html{font-size:16px}body{font-family:'Outfit',sans-serif;background:var(--bg-tertiary);color:var(--text-primary);line-height:1.7;min-height:100vh}
+    .wrap{max-width:900px;margin:0 auto;padding:3rem 2rem 5rem}
+    .hero{border-bottom:.5px solid var(--border);padding-bottom:2.5rem;margin-bottom:3rem}
+    .eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
+    .hero h1{font-family:'DM Serif Display',serif;font-size:52px;font-weight:400;line-height:1.1;letter-spacing:-.5px;color:var(--text-primary);margin-bottom:1.25rem}
+    .hero h1 em{font-style:italic;color:var(--green)}
+    .hero-sub{font-size:16px;color:var(--text-secondary);line-height:1.75;max-width:600px;margin-bottom:1.75rem}
+    .tag-row{display:flex;flex-wrap:wrap;gap:8px}
+    .tag{font-family:'DM Mono',monospace;font-size:11px;padding:4px 10px;border-radius:4px;border:.5px solid var(--border-mid);color:var(--text-secondary);background:var(--bg-secondary)}
+    .tag.green{background:var(--green-light);color:var(--green-dark);border-color:var(--green-mid)}
+    .section-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
+    .metrics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:3rem}
+    .metric{background:var(--bg-secondary);border-radius:var(--radius-md);padding:1.1rem 1rem}
+    .metric-val{font-family:'DM Serif Display',serif;font-size:32px;color:var(--text-primary);line-height:1;margin-bottom:5px}
+    .metric-val span{font-size:18px;color:var(--green)}
+    .metric-lbl{font-size:12px;color:var(--text-secondary)}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:3rem}
+    .card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem}
+    .card h3{font-size:13px;font-weight:500;margin-bottom:1.25rem;color:var(--text-primary)}
+    .pipe-step{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:.5px solid var(--border)}
+    .pipe-step:last-child{border-bottom:none}
+    .pipe-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--green-dark);background:var(--green-light);border-radius:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+    .pipe-text strong{font-size:13px;font-weight:500;display:block;margin-bottom:2px}
+    .pipe-text p{font-size:12px;color:var(--text-secondary);line-height:1.5}
+    .stack-list{display:flex;flex-direction:column;gap:8px}
+    .stack-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--bg-secondary);border-radius:var(--radius-md)}
+    .stack-name{font-size:13px;font-weight:500}.stack-role{font-size:11px;color:var(--text-secondary);font-family:'DM Mono',monospace}
+    .results-section{margin-bottom:3rem}
+    .bar-chart{display:flex;flex-direction:column;gap:10px}
+    .bar-row{display:flex;align-items:center;gap:10px;font-size:12px}
+    .bar-label{width:200px;flex-shrink:0;color:var(--text-secondary);text-align:right;line-height:1.3}
+    .bar-track{flex:1;height:20px;background:var(--bg-secondary);border-radius:3px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:3px}
+    .bar-pct{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-secondary);width:36px}
+    .sql-block{margin-bottom:3rem}
+    .sql-tabs{display:flex;gap:4px;margin-bottom:1px;flex-wrap:wrap}
+    .sql-tab{font-family:'DM Mono',monospace;font-size:11px;padding:5px 14px;border-radius:4px 4px 0 0;border:.5px solid var(--border);border-bottom:none;background:var(--bg-secondary);color:var(--text-secondary);cursor:pointer;transition:background .15s;user-select:none}
+    .sql-tab.active{background:var(--bg);color:var(--text-primary);border-color:var(--border-mid)}
+    .sql-pane{display:none;background:var(--bg);border:.5px solid var(--border-mid);border-radius:0 var(--radius-md) var(--radius-md) var(--radius-md);padding:1.25rem 1.5rem}
+    .sql-pane.active{display:block}
+    .sql-desc{font-size:13px;color:var(--text-secondary);margin-bottom:1rem;font-style:italic}
+    .sql-code{font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;color:var(--text-primary);white-space:pre;overflow-x:auto}
+    .kw{color:var(--green);font-weight:500}.cm{color:#BA7517}
+    .interview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:3rem}
+    .interview-card{border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem 1.25rem;background:var(--bg)}
+    .interviewer-role{font-size:10px;font-weight:500;color:var(--green);margin-bottom:8px;font-family:'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+    .pitch-line{font-size:13px;color:var(--text-secondary);line-height:1.65}
+    .resume-line{background:var(--green-light);border-left:3px solid var(--green);border-radius:0 var(--radius-md) var(--radius-md) 0;padding:1.25rem 1.5rem;margin-bottom:3rem}
+    .rl-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--green-dark);margin-bottom:8px}
+    .resume-line p{font-size:14px;color:var(--green-deeper);line-height:1.75;font-style:italic}
+    .file-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:3rem}
+    .file-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:.5px solid var(--border);border-radius:var(--radius-md);background:var(--bg)}
+    .file-icon{font-family:'DM Mono',monospace;font-size:10px;padding:3px 7px;border-radius:3px;flex-shrink:0;font-weight:500}
+    .file-icon.py{background:#E1F5EE;color:#0F6E56}.file-icon.sql{background:#E6F1FB;color:#185FA5}.file-icon.png{background:#FAEEDA;color:#854F0B}.file-icon.md{background:#F1EFE8;color:#5F5E5A}
+    .file-name{font-family:'DM Mono',monospace;font-size:13px;color:var(--text-primary)}.file-desc{font-size:11px;color:var(--text-secondary);margin-top:2px}
+    .author-row{display:flex;align-items:center;gap:14px;padding-top:2.5rem;border-top:.5px solid var(--border);flex-wrap:wrap}
+    .avatar{width:44px;height:44px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:var(--green-dark);flex-shrink:0}
+    .author-name{font-size:15px;font-weight:500}.author-title{font-size:12px;color:var(--text-secondary);margin-top:1px}
+    .github-btn{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500;padding:9px 16px;border-radius:var(--radius-md);border:.5px solid var(--border-mid);background:var(--bg);color:var(--text-primary);cursor:pointer;text-decoration:none;transition:background .15s;font-family:'Outfit',sans-serif}
+    .github-btn:hover{background:var(--bg-secondary)}
+    @media(max-width:700px){.hero h1{font-size:34px}.two-col{grid-template-columns:1fr}.metrics-grid{grid-template-columns:1fr 1fr}.interview-grid{grid-template-columns:1fr}.file-list{grid-template-columns:1fr}.bar-label{width:130px;font-size:11px}.github-btn{margin-left:0;margin-top:.5rem}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <p class="eyebrow">Portfolio Project · P4 · Statistics · Python · SQL</p>
+    <h1>Experimentation<br><em>A/B Test Analysis</em></h1>
+    <p class="hero-sub">Full statistical A/B test analysis on a simulated checkout flow experiment (10,000 users). Covers chi-square significance testing, 95% confidence intervals, device-level segment analysis, and revenue uplift projection — the exact experimentation framework used at Stripe, Google, and CRED.</p>
+    <div class="tag-row"><span class="tag green">No API needed · pure Python</span> <span class="tag">Python</span> <span class="tag">SciPy</span> <span class="tag">pandas</span> <span class="tag">matplotlib</span> <span class="tag">SQL</span> <span class="tag">statistics</span></div>
+  </div>
+  <p class="section-label">Key results</p>
+  <div class="metrics-grid">
+    <div class="metric"><div class="metric-val">10K</div><div class="metric-lbl">simulated users</div></div>
+    <div class="metric"><div class="metric-val">3.8</div><div class="metric-lbl">% treatment CVR</div></div>
+    <div class="metric"><div class="metric-val">p&lt;.05</div><div class="metric-lbl">statistically significant</div></div>
+    <div class="metric"><div class="metric-val">~$6K</div><div class="metric-lbl">monthly revenue uplift</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>Pipeline architecture</h3>
+      <div class="pipe-step"><div class="pipe-num">01</div><div class="pipe-text"><strong>Generate data</strong><p>Simulate 10,000 users (5K control / 5K treatment) with realistic conversion rates, cart values, and device mix</p></div></div>
+      <div class="pipe-step"><div class="pipe-num">02</div><div class="pipe-text"><strong>Chi-square test</strong><p>Build contingency table [converted/not × control/treatment], compute chi-square statistic and p-value</p></div></div>
+      <div class="pipe-step"><div class="pipe-num">03</div><div class="pipe-text"><strong>Confidence interval</strong><p>Calculate 95% CI on conversion rate difference using normal approximation standard error</p></div></div>
+      <div class="pipe-step"><div class="pipe-num">04</div><div class="pipe-text"><strong>Segment analysis</strong><p>Break results by device (mobile/desktop/tablet) to check if effect holds across sub-groups</p></div></div>
+      <div class="pipe-step"><div class="pipe-num">05</div><div class="pipe-text"><strong>Revenue projection</strong><p>Multiply (CR_treatment - CR_control) × monthly_visitors × avg_cart_value for business impact</p></div></div>
+      <div class="pipe-step"><div class="pipe-num">06</div><div class="pipe-text"><strong>Business recommendation</strong><p>Print SHIP or DO NOT SHIP recommendation with p-value, CI, and projected monthly revenue uplift</p></div></div>
+    </div>
+    <div class="card">
+      <h3>Tech stack</h3>
+      <div class="stack-list">
+        <div class="stack-item"><span class="stack-name">numpy</span><span class="stack-role">random seed · binomial simulation</span></div>
+        <div class="stack-item"><span class="stack-name">SciPy</span><span class="stack-role">chi2_contingency significance test</span></div>
+        <div class="stack-item"><span class="stack-name">pandas</span><span class="stack-role">data manipulation · segment analysis</span></div>
+        <div class="stack-item"><span class="stack-name">matplotlib</span><span class="stack-role">4-chart analysis dashboard</span></div>
+        <div class="stack-item"><span class="stack-name">SQL (SQLiteOnline)</span><span class="stack-role">conversion rates · device breakdown</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-section">
+    <p class="section-label">Key metrics breakdown</p>
+    <div class="card" style="padding:1.5rem 1.75rem"><div class="bar-chart" id="barChart"></div></div>
+  </div>
+
+  <div class="sql-block">
+    <p class="section-label">SQL analysis queries</p>
+    <div class="sql-tabs">
+      <div class="sql-tab active" onclick="showTab(0)">Q1 — Conversion rates</div>
+      <div class="sql-tab" onclick="showTab(1)">Q2 — Device segment</div>
+    </div>
+    <div class="sql-pane active" id="pane0">
+      <p class="sql-desc">Core conversion rate comparison between control and treatment variants.</p>
+      <div class="sql-code"><span class="kw">SELECT</span>
+  variant,
+  <span class="kw">COUNT</span>(*) <span class="kw">AS</span> total_users,
+  <span class="kw">SUM</span>(converted) <span class="kw">AS</span> conversions,
+  <span class="kw">ROUND</span>(100.0 * <span class="kw">SUM</span>(converted) / <span class="kw">COUNT</span>(*), 2) <span class="kw">AS</span> conversion_rate_pct,
+  <span class="kw">ROUND</span>(<span class="kw">AVG</span>(cart_value), 2) <span class="kw">AS</span> avg_cart_value,
+  <span class="kw">ROUND</span>(<span class="kw">AVG</span>(time_on_page_sec), 0) <span class="kw">AS</span> avg_time_sec
+<span class="kw">FROM</span> ab_test_results
+<span class="kw">GROUP BY</span> variant;</div>
+    </div>
+    <div class="sql-pane" id="pane1">
+      <p class="sql-desc">Conversion rate broken down by device type for each variant.</p>
+      <div class="sql-code"><span class="kw">SELECT</span>
+  variant, device,
+  <span class="kw">COUNT</span>(*) <span class="kw">AS</span> users,
+  <span class="kw">SUM</span>(converted) <span class="kw">AS</span> conversions,
+  <span class="kw">ROUND</span>(100.0 * <span class="kw">SUM</span>(converted) / <span class="kw">COUNT</span>(*), 2) <span class="kw">AS</span> conversion_pct,
+  <span class="kw">ROUND</span>(<span class="kw">AVG</span>(cart_value), 2) <span class="kw">AS</span> avg_cart
+<span class="kw">FROM</span> ab_test_results
+<span class="kw">GROUP BY</span> variant, device
+<span class="kw">ORDER BY</span> device, variant;</div>
+    </div>
+  </div>
+
+  <p class="section-label">Interview pitch by role</p>
+  <div class="interview-grid">
+    <div class="interview-card"><div class="interviewer-role">Data Analyst</div><p class="pitch-line">"Ran a full A/B test analysis on 10,000 users. Treatment (3-step checkout) showed statistically significant 18.75% lift in conversion rate (p&lt;0.05). Calculated 95% CI and projected ~$6K additional monthly revenue at 100K visitors."</p></div>
+    <div class="interview-card"><div class="interviewer-role">Business Analyst</div><p class="pitch-line">"Translated statistical output into a clear SHIP recommendation with business justification. Showed the effect holds on mobile (62% of traffic) — the most important segment."</p></div>
+    <div class="interview-card"><div class="interviewer-role">BIE / Product Analyst</div><p class="pitch-line">"Demonstrates understanding of experimental design: seeded randomisation for reproducibility, chi-square for binary outcome testing, CI for uncertainty quantification, and segment analysis for interaction effects."</p></div>
+  </div>
+
+  <div class="resume-line"><div class="rl-label">Resume line</div><p>"Designed and analysed a 10,000-user A/B experiment on checkout flow (3-step vs 5-step); identified statistically significant 18.75% conversion lift (p&lt;0.05, 95% CI [+0.2%, +1.1%]); projected ~$6K incremental monthly revenue using Python (SciPy) and SQL segment analysis."</p></div>
+
+  <p class="section-label">Repository files</p>
+  <div class="file-list">
+    <div class="file-item"><div class="file-icon py">.py</div><div><div class="file-name">generate_ab_data.py</div><div class="file-desc">Simulate 10K users · seeded · realistic CVR</div></div></div>
+    <div class="file-item"><div class="file-icon py">.py</div><div><div class="file-name">ab_significance.py</div><div class="file-desc">Chi-square · CI · device segments · charts</div></div></div>
+    <div class="file-item"><div class="file-icon sql">.sql</div><div><div class="file-name">ab_test_results.sql</div><div class="file-desc">Conversion rates · device breakdown</div></div></div>
+    <div class="file-item"><div class="file-icon png">.png</div><div><div class="file-name">ab_test_analysis.png</div><div class="file-desc">4-chart output · add to output/</div></div></div>
+    <div class="file-item"><div class="file-icon md">.md</div><div><div class="file-name">README.md</div><div class="file-desc">Scenario · methodology · finding · recommendation</div></div></div>
+  </div>
+
+  <div class="author-row">
+    <div class="avatar">PM</div>
+    <div><div class="author-name">Parvathy Menon</div><div class="author-title">Senior Business Analyst · Data & Product Operations</div></div>
+    <a class="github-btn" href="https://github.com/Parvathyamenon" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      github.com/Parvathyamenon
+    </a>
+  </div>
+</div>
+<script>
+  function showTab(i) {
+    document.querySelectorAll('.sql-tab').forEach((t,j) => t.classList.toggle('active', i===j));
+    document.querySelectorAll('.sql-pane').forEach((p,j) => p.classList.toggle('active', i===j));
+  }
+  const barsData = [{"label": "Control CVR", "pct": 3.2, "color": "#6b6a65"}, {"label": "Treatment CVR", "pct": 3.8, "color": "#1D9E75"}, {"label": "Mobile conversion", "pct": 2.9, "color": "#378ADD"}, {"label": "Desktop conversion", "pct": 4.5, "color": "#7F77DD"}, {"label": "Tablet conversion", "pct": 3.1, "color": "#BA7517"}];
+  if (barsData && barsData.length) {
+    const chart = document.getElementById('barChart');
+    if (chart) {
+      barsData.forEach(b => {
+        const row = document.createElement('div'); row.className = 'bar-row';
+        row.innerHTML = `<div class="bar-label">${b.label}</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:${b.color};transition:width 0.9s ease;"></div></div><div class="bar-pct">${b.pct}%</div>`;
+        chart.appendChild(row);
+      });
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.querySelectorAll('.bar-fill').forEach((el, i) => { el.style.width = barsData[i].pct + '%'; });
+      }));
+    }
+  }
+</script>
+</body>
+</html>
